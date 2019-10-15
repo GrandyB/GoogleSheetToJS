@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Sheets to OBS</title>
+    <meta charset="utf-8" />
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      var spreadsheet_id = '1DSvf4p1kgdMMqpjLpLnxGsSsb122i2XsgqMdHRAnPBE';
+      var url = "https://spreadsheets.google.com/feeds/cells/" + spreadsheet_id + "/1/public/values?alt=json";
+
+      $.getJSON(url, function(data) {
+        var entry = data.feed.entry;
+        var cellValues = new Map();
+
+        $(entry).each(function(){
+          cellValues.set(this.title.$t, this.content.$t);
+          var outputDiv = document.getElementById(this.title.$t);
+          if (outputDiv != null) {
+            outputDiv.innerHTML = this.content.$t;
+          }
+        });
+        console.log(cellValues);
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="C2"></div>
+  </body>
+</html>
