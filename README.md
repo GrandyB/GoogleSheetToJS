@@ -12,6 +12,7 @@ A simple Javascript program designed to allow broadcasters to input data into lo
 
 1. Populate your HTML pages and spreadsheet! Anything using an <img> tag will try to set the source to be whatever is referenced by the ID of the element, while anything else it tries to set the innerHTML.
 
+
 # FAQ
 
 - **Can I edit this or use this elsewhere?**
