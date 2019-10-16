@@ -1,32 +1,33 @@
+<!--
+    This file is part of GoogleSheetToOBS.
+
+    GoogleSheetToOBS is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    GoogleSheetToOBS is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with GoogleSheetToOBS. If not, see <https://www.gnu.org/licenses/>.
+-->
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Google Sheets to OBS</title>
-    <meta charset="utf-8" />
+    <head>
+        <title>Google Sheets to OBS</title>
+        <meta charset="utf-8" />
 
+        <script type="text/javascript" src="./GoogleSheetToOBS.js"></script>
+        <script type="text/javascript" src="./Creds.js"></script>
+        <script type="text/javascript">
+            var updateLoop = new GoogleSheetToOBS(Creds.getSpreadsheetId(), 1, 2500);
+        </script>
+    </head>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript">
-      var spreadsheet_id = '1DSvf4p1kgdMMqpjLpLnxGsSsb122i2XsgqMdHRAnPBE';
-      var url = "https://spreadsheets.google.com/feeds/cells/" + spreadsheet_id + "/1/public/values?alt=json";
-
-      $.getJSON(url, function(data) {
-        var entry = data.feed.entry;
-        var cellValues = new Map();
-
-        $(entry).each(function(){
-          cellValues.set(this.title.$t, this.content.$t);
-          var outputDiv = document.getElementById(this.title.$t);
-          if (outputDiv != null) {
-            outputDiv.innerHTML = this.content.$t;
-          }
-        });
-        console.log(cellValues);
-      });
-    </script>
-  </head>
-
-  <body>
-    <div id="C2"></div>
-  </body>
+    <body>
+        <div id="C2"></div>
+    </body>
 </html>
