@@ -34,9 +34,13 @@ class GoogleSheetToOBS {
                     let cellContent = e.content.$t;
 
                     cellValues.set(cellRef, cellContent);
-                    var outputDiv = document.getElementById(cellRef);
-                    if (outputDiv != null) {
-                        outputDiv.innerHTML = cellContent;
+                    var outputElement = document.getElementById(cellRef);
+                    if (outputElement != null) {
+                        if (outputElement.nodeName.toLowerCase() === 'img') {
+                            outputElement.src = cellContent;
+                        } else {
+                            outputElement.innerHTML = cellContent;
+                        }
                     }
                 });
 

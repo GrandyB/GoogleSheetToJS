@@ -8,9 +8,9 @@ A simple Javascript program designed to allow broadcasters to input data into lo
 
 1. Take the regular spreadsheet's url (e.g. _https://docs.google.com/spreadsheets/d/**1DSvf4p1kgdMMqpjLpLnxGsSsb122i2XsgqMdHRAnPBE**/edit#gid=0_) and copy out the middle identifying sectiion (highlighted in bold).
 
-1. Go to the main javascript file and replace the _spreadsheet_id_ with this ID. This file uses spreadsheet cell identifiers as IDs for document manipulation using Javascript.
+1. Go to the Creds.js javascript file and put in your spreadsheet ID. This file uses spreadsheet cell identifiers as IDs for document manipulation using Javascript.
 
-_Still in development._
+1. Populate your HTML pages and spreadsheet! Anything using an <img> tag will try to set the source to be whatever is referenced by the ID of the element, while anything else it tries to set the innerHTML.
 
 # FAQ
 
@@ -24,3 +24,9 @@ _Still in development._
 
 # Licensing
 Licensed under the GNU GPLv3 - see LICENSE.
+
+# TODO
+
+1. More examples
+
+1. Triggers - show/hide things based on spreadsheet content?
