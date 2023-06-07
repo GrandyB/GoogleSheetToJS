@@ -28,9 +28,12 @@
         <meta charset="utf-8" />
 
         <script type="text/javascript" src="./GoogleSheetToJS.js"></script>
-        <script type="text/javascript" src="./Creds.js"></script>
         <script type="text/javascript">
-            var updateLoop = new GoogleSheetToJS(Creds.getApiKey(), Creds.getSpreadsheetId(), "Sheet1", 2500);
+            var apiKey = "INSERT YOUR API KEY HERE";
+            var spreadsheetId = "1DSvf4p1kgdMMqpjLpLnxGsSsb122i2XsgqMdHRAnPBE";
+            var tabName = "Sheet1";
+
+            var updateLoop = new GoogleSheetToJS(apiKey, spreadsheetId, tabName, 2500);
         </script>
     </head>
 
