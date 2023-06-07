@@ -19,10 +19,6 @@ A simple Javascript program designed to allow broadcasters to input data into lo
 
    Sure can! MIT license.
 
-- **The A column and number 1 row don't sync?!** 
-
-   Correct. A limitation of using the Google API in this way - it treats the first row and column as header rows. It'll happily retrieve any other cell.
-
 # Acknowledgements/Ramble
 I'll be the first to admit I didn't come up with the idea of using Google Sheets to drive a broadcast!
 
