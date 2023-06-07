@@ -1,20 +1,26 @@
-//  This file is part of GoogleSheetToJS.
-//
-//  GoogleSheetToJS is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  GoogleSheetToJS is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with GoogleSheetToJS. If not, see <https://www.gnu.org/licenses/>.
+// MIT License
+
+// Copyright (c) 2023 Mark "Grandy" Bishop
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 class GoogleSheetToJS {
-
     /* 
      * Constructor; creates initial state and begins the update loop.
      * @param sheetId
@@ -24,16 +30,13 @@ class GoogleSheetToJS {
      * @param freq
      *          the looping interval (in milliseconds)
      */
-    constructor(sheetId, tabNum, freq) {
-        this.url = "https://spreadsheets.google.com/feeds/cells/" + sheetId + "/" + tabNum + "/public/values?alt=json";
+    constructor(apiKey, sheetId, tabName, freq) {
+        this.url = "https://sheets.googleapis.com/v4/spreadsheets/" + sheetId + "/values/" + tabName + "?key=" + apiKey;
         this.freq = freq;
         console.log("Querying '" + this.url + "' every '" + this.freq + "ms'");
 
         // 'cellValues' is our cache of cell ids to their content, e.g. "C3" => "Test value"
         this.cellValues = new Map();
-
-        // Begin looping!
-        this.updateLoop();
     }
 
     /*
@@ -42,16 +45,36 @@ class GoogleSheetToJS {
      * based on their tag names.
      */
     updateLoop() {
+        this.update();
+        /*
+         * "Google Sheets API has a limit of 500 requests per 100 seconds per project, and 100 requests per 100 seconds per user."
+         * I imagine there'd be multiple pages using this, some of which will need quicker update times than others.
+         * Every 2-3 seconds is probably a safe bet..?
+         */
+        setTimeout(this.updateLoop.bind(this), this.freq);
+    }
+
+    update() {
         fetch(this.url)
             .then(this.handleErrors)
             .then(res => res.json())
             .then((data) => {
-                var entry = data.feed.entry;
+                var values = data.values;
+                var entry = [];
+                for (let row = 0; row < values.length; row++) {
+                  for (let col = 0; col < values[row].length; col++) {
+                    const cellRef = String.fromCharCode(65 + col) + (row + 1);
+                    entry.push({
+                      ref: cellRef,
+                      value: values[row][col]
+                    });
+                  }
+                }
 
                 let that = this;
                 entry.forEach(function(e, i){
-                    let cellRef = e.title.$t;
-                    let cellContent = e.content.$t;
+                    let cellRef = e.ref;
+                    let cellContent = e.value;
 
                     let existing = that.cellValues.get(cellRef);
                     if (existing == null || existing !== cellContent) {
@@ -63,7 +86,7 @@ class GoogleSheetToJS {
                         var outputElement = document.getElementById(cellRef);
                         if (outputElement != null) {
                             if (outputElement.nodeName.toLowerCase() === 'img') {
-                                outputElement.src = cellContent;
+                                outputElement.src = cellContent.trim() === '' || cellContent === '#N/A' ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=' : cellContent;
                             } else {
                                 outputElement.innerHTML = cellContent;
                             }
@@ -73,14 +96,7 @@ class GoogleSheetToJS {
 
                 console.log("Ping");
 
-            }).catch(error => console.log(error));
-
-        /*
-         * "Google Sheets API has a limit of 500 requests per 100 seconds per project, and 100 requests per 100 seconds per user."
-         * I imagine there'd be multiple pages using this, some of which will need quicker update times than others.
-         * Every 2-3 seconds is probably a safe bet..?
-         */
-        setTimeout(this.updateLoop.bind(this), this.freq);
+            }).catch(err => console.log(err));
     };
 
     /*
