@@ -79,7 +79,7 @@ class GoogleSheetToJS {
                     let existing = that.cellValues.get(cellRef);
                     if (existing == null || existing !== cellContent) {
                         // Only update document content if cells have changed values
-                        console.log(cellRef + " has changed; '" + existing + "' -> '" + cellContent + "'");
+                        console.debug(cellRef + " has changed; '" + existing + "' -> '" + cellContent + "'");
                         that.cellValues.set(cellRef, cellContent);
 
                         // Set the element
@@ -88,15 +88,16 @@ class GoogleSheetToJS {
                             if (outputElement.nodeName.toLowerCase() === 'img') {
                                 outputElement.src = cellContent.trim() === '' || cellContent === '#N/A' ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII=' : cellContent;
                             } else {
+                                console.debug(`Applying to '${cellRef}': '${cellContent}'`);
                                 outputElement.innerHTML = cellContent;
                             }
                         }
                     }
                 });
 
-                console.log("Ping");
+                console.debug("Update loop completed");
 
-            }).catch(err => console.log(err));
+            }).catch(err => console.error(err));
     };
 
     /*
